@@ -1,8 +1,12 @@
-# txtmsk
+txtmsk
+=======
+txtmsk encrypts the text.
+
+Mac OS X only !!!
 
 Usage
 -----
-Set Password
+Set Password (Mac OS X Keychain)
 
     $ txtmsk -p
 

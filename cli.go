@@ -6,8 +6,9 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"fmt"
-	"github.com/Songmu/prompter"
+	"github.com/Bowery/prompt"
 	"github.com/jessevdk/go-flags"
 	"github.com/lunixbochs/go-keychain"
 	"io"
@@ -23,7 +24,7 @@ func NewCLI() *CLI {
 
 type CommandlineOptions struct {
 	Decrypt  bool `short:"d" long:"dec"      description:"Decrypt mode"`
-	Password bool `short:"p" long:"password" description:"Set password"`
+	Password bool `short:"p" long:"password" description:"Set the password in Keychain"`
 	Version  bool `short:"v" long:"version"  description:"Show program's version number"`
 }
 
@@ -50,13 +51,14 @@ func (cli *CLI) Run() error {
 	}
 
 	if opts.Version {
-		fmt.Println("Version 0.1")
+		fmt.Println("Version 0.2")
 		return nil
 	}
 
-	if opts.Password {
-		password := prompter.Password("Set Password")
-		keychain.Add("txtmsk", "", password)
+	pw, err := GetPassword()
+
+	if opts.Password || err != nil {
+		SetPassword()
 		return nil
 	}
 
@@ -68,14 +70,8 @@ func (cli *CLI) Run() error {
 		text += sc.Text()
 	}
 
-	key, err := keychain.Find("txtmsk", "")
-
-	if err != nil {
-		return nil
-	}
-
 	if opts.Decrypt {
-		decrypted_text, err := GetDecryptedText(text, []byte(key))
+		decrypted_text, err := GetDecryptedText(text, []byte(pw))
 
 		if err != nil {
 			return err
@@ -85,7 +81,7 @@ func (cli *CLI) Run() error {
 		return nil
 	}
 
-	cipher_text, err := GetEncryptText([]byte(text), []byte(key))
+	cipher_text, err := GetEncryptedText([]byte(text), []byte(pw))
 
 	if err != nil {
 		return err
@@ -95,7 +91,67 @@ func (cli *CLI) Run() error {
 	return nil
 }
 
-func GetEncryptText(plain_text []byte, key []byte) (string, error) {
+func SetPassword() {
+	stdin := os.Stdin
+	os.Stdin, _ = os.Open("/dev/tty")
+
+	for {
+		pw, err := prompt.Password("Set the password in Keychain: ")
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
+			break
+		}
+
+		if len(pw) > 32 {
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "password len 32 is over")
+			continue
+		}
+
+		keychain.Remove("txtmsk", "")
+
+		if err := keychain.Add("txtmsk", "", pw); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
+			continue
+		}
+
+		break
+	}
+
+	os.Stdin = stdin
+}
+
+func GetPassword() (string, error) {
+	pw, err := keychain.Find("txtmsk", "")
+
+	if err != nil {
+		return "", err
+	}
+
+	l := len(pw)
+	m := 0
+
+	switch {
+	case (l < 16):
+		m = 16
+	case (l < 24):
+		m = 24
+	case (l < 32):
+		m = 32
+	case (l > 32):
+		return "", errors.New("32 error")
+	case (l == 0):
+		return "", errors.New("0 error")
+	}
+
+	for i := l; i < m; i++ {
+		pw += "*"
+	}
+
+	return pw, nil
+}
+
+func GetEncryptedText(plain_text []byte, key []byte) (string, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
