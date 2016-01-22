@@ -6,6 +6,10 @@ import (
 	"runtime"
 )
 
+const (
+	VERSION = "0.2"
+)
+
 func main() {
 	os.Exit(_main())
 }

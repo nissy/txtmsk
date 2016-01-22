@@ -51,7 +51,7 @@ func (cli *CLI) Run() error {
 	}
 
 	if opts.Version {
-		fmt.Println("Version 0.2")
+		fmt.Println("Version " + VERSION)
 		return nil
 	}
 
@@ -139,9 +139,9 @@ func GetPassword() (string, error) {
 	case (l < 32):
 		m = 32
 	case (l > 32):
-		return "", errors.New("32 error")
+		return "", errors.New("Error: password len 32 is over")
 	case (l == 0):
-		return "", errors.New("0 error")
+		return "", errors.New("Error: password is nil")
 	}
 
 	for i := l; i < m; i++ {
