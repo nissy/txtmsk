@@ -26,3 +26,15 @@ Decrypt
     $ echo "GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc" | txtmsk -d
     aaaaaaaaaaaaaaaaaaaa
     
+Help
+-----
+    Usage:
+      txtmsk [-d] [-p] [-v]
+    
+    Application Options:
+      -d, --decrypt   Decrypt mode
+      -p, --password  Set the password in Keychain
+      -v, --version   Show program's version number
+    
+    Help Options:
+      -h, --help      Show this help message
