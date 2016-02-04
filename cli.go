@@ -7,6 +7,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/lunixbochs/go-keychain"
 	"github.com/ngc224/mask"
+	"golang.org/x/crypto/ssh/terminal"
 	"os"
 )
 
@@ -54,6 +55,9 @@ func (cli *CLI) Run() error {
 
 	if opts.Password || err != nil {
 		SetPassword()
+	}
+
+	if terminal.IsTerminal(0) {
 		return nil
 	}
 
@@ -73,7 +77,7 @@ func (cli *CLI) Run() error {
 			return err
 		}
 
-		fmt.Println(decrypted_text)
+		fmt.Print(decrypted_text)
 		return nil
 	}
 
