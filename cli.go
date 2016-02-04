@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"github.com/Bowery/prompt"
 	"github.com/jessevdk/go-flags"
@@ -54,7 +55,11 @@ func (cli *CLI) Run() error {
 	pw, err := GetPassword()
 
 	if opts.Password || err != nil {
-		SetPassword()
+		pw, err = SetPassword()
+
+		if err != nil {
+			return err
+		}
 	}
 
 	if terminal.IsTerminal(0) {
@@ -91,7 +96,7 @@ func (cli *CLI) Run() error {
 	return nil
 }
 
-func SetPassword() {
+func SetPassword() (string, error) {
 	stdin := os.Stdin
 	os.Stdin, _ = os.Open("/dev/tty")
 
@@ -115,10 +120,11 @@ func SetPassword() {
 			continue
 		}
 
-		break
+		os.Stdin = stdin
+		return mask.GetKey(pw)
 	}
 
-	os.Stdin = stdin
+	return "", errors.New("Error: No set password ")
 }
 
 func GetPassword() (string, error) {
