@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	VERSION = "0.2"
+	APPLICATION_NAME = "txtmsk"
+	VERSION          = "0.2"
 )
 
 func main() {

@@ -2,16 +2,11 @@ package main
 
 import (
 	"bufio"
-	"crypto/aes"
-	"crypto/cipher"
-	"crypto/rand"
-	"encoding/base64"
-	"errors"
 	"fmt"
 	"github.com/Bowery/prompt"
 	"github.com/jessevdk/go-flags"
 	"github.com/lunixbochs/go-keychain"
-	"io"
+	"github.com/ngc224/mask"
 	"os"
 )
 
@@ -23,7 +18,7 @@ func NewCLI() *CLI {
 }
 
 type CommandlineOptions struct {
-	Decrypt  bool `short:"d" long:"dec"      description:"Decrypt mode"`
+	Decrypt  bool `short:"d" long:"decrypt"  description:"Decrypt mode"`
 	Password bool `short:"p" long:"password" description:"Set the password in Keychain"`
 	Version  bool `short:"v" long:"version"  description:"Show program's version number"`
 }
@@ -32,7 +27,7 @@ func (cli *CLI) parseCmdopts() (*CommandlineOptions, []string, error) {
 	opts := &CommandlineOptions{}
 
 	parser := flags.NewParser(opts, flags.Default)
-	parser.Name = "txtmsk"
+	parser.Name = APPLICATION_NAME
 	parser.Usage = "[-d] [-p] [-v]"
 	args, err := parser.Parse()
 
@@ -62,6 +57,8 @@ func (cli *CLI) Run() error {
 		return nil
 	}
 
+	mask := mask.NewMask(pw)
+
 	var text string
 
 	sc := bufio.NewScanner(os.Stdin)
@@ -71,7 +68,7 @@ func (cli *CLI) Run() error {
 	}
 
 	if opts.Decrypt {
-		decrypted_text, err := GetDecryptedText(text, []byte(pw))
+		decrypted_text, err := mask.Decrypt(text)
 
 		if err != nil {
 			return err
@@ -81,7 +78,7 @@ func (cli *CLI) Run() error {
 		return nil
 	}
 
-	cipher_text, err := GetEncryptedText([]byte(text), []byte(pw))
+	cipher_text, err := mask.Encrypt(text)
 
 	if err != nil {
 		return err
@@ -108,9 +105,9 @@ func SetPassword() {
 			continue
 		}
 
-		keychain.Remove("txtmsk", "")
+		keychain.Remove(APPLICATION_NAME, "")
 
-		if err := keychain.Add("txtmsk", "", pw); err != nil {
+		if err := keychain.Add(APPLICATION_NAME, "", pw); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
 			continue
 		}
@@ -122,69 +119,11 @@ func SetPassword() {
 }
 
 func GetPassword() (string, error) {
-	pw, err := keychain.Find("txtmsk", "")
+	pw, err := keychain.Find(APPLICATION_NAME, "")
 
 	if err != nil {
 		return "", err
 	}
 
-	l := len(pw)
-	m := 0
-
-	switch {
-	case (l < 16):
-		m = 16
-	case (l < 24):
-		m = 24
-	case (l < 32):
-		m = 32
-	case (l > 32):
-		return "", errors.New("Error: password len 32 is over")
-	case (l == 0):
-		return "", errors.New("Error: password is nil")
-	}
-
-	for i := l; i < m; i++ {
-		pw += "*"
-	}
-
-	return pw, nil
-}
-
-func GetEncryptedText(plain_text []byte, key []byte) (string, error) {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		return "", err
-	}
-
-	cipher_text := make([]byte, aes.BlockSize+len(plain_text))
-	iv := cipher_text[:aes.BlockSize]
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	encrypt_stream := cipher.NewCTR(block, iv)
-	encrypt_stream.XORKeyStream(cipher_text[aes.BlockSize:], plain_text)
-
-	return base64.StdEncoding.EncodeToString(cipher_text), nil
-}
-
-func GetDecryptedText(plain_text string, key []byte) (string, error) {
-	cipher_text, err := base64.StdEncoding.DecodeString(plain_text)
-
-	if err != nil {
-		return "", err
-	}
-
-	block, err := aes.NewCipher(key)
-
-	if err != nil {
-		return "", err
-	}
-
-	decrypted_text := make([]byte, len(cipher_text[aes.BlockSize:]))
-	decrypt_stream := cipher.NewCTR(block, cipher_text[:aes.BlockSize])
-	decrypt_stream.XORKeyStream(decrypted_text, cipher_text[aes.BlockSize:])
-
-	return string(decrypted_text), nil
+	return mask.GetKey(pw)
 }
