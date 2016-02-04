@@ -57,18 +57,17 @@ func (cli *CLI) Run() error {
 		return nil
 	}
 
-	mask := mask.NewMask(pw)
-
-	var text string
-
 	sc := bufio.NewScanner(os.Stdin)
+	var text string
 
 	for sc.Scan() {
 		text += sc.Text() + "\n"
 	}
 
+	m := mask.NewMask(pw)
+
 	if opts.Decrypt {
-		decrypted_text, err := mask.Decrypt(text)
+		decrypted_text, err := m.Decrypt(text)
 
 		if err != nil {
 			return err
@@ -78,7 +77,7 @@ func (cli *CLI) Run() error {
 		return nil
 	}
 
-	cipher_text, err := mask.Encrypt(text)
+	cipher_text, err := m.Encrypt(text)
 
 	if err != nil {
 		return err
