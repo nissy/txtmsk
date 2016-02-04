@@ -64,7 +64,7 @@ func (cli *CLI) Run() error {
 	sc := bufio.NewScanner(os.Stdin)
 
 	for sc.Scan() {
-		text += sc.Text()
+		text += sc.Text() + "\n"
 	}
 
 	if opts.Decrypt {
