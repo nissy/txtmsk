@@ -4,6 +4,12 @@ txtmsk encrypts the text.
 
 Mac OS X only !!!
 
+
+Install
+-----
+    $ brew install ngc224/txtmsk/txtmsk
+
+
 Usage
 -----
 Set Password (Mac OS X Keychain)
