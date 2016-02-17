@@ -73,7 +73,11 @@ func (cli *CLI) Run() error {
 		text += sc.Text() + "\n"
 	}
 
-	m := mask.NewMask(pw)
+	m, err := mask.NewMask(pw)
+
+	if err != nil {
+		return err
+	}
 
 	if opts.Decrypt {
 		decrypted_text, err := m.Decrypt(text)
@@ -109,7 +113,7 @@ func SetPassword() (string, error) {
 		}
 
 		if len(pw) > 32 {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "password len 32 is over")
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "Password len 32 is over")
 			continue
 		}
 
@@ -121,7 +125,7 @@ func SetPassword() (string, error) {
 		}
 
 		os.Stdin = stdin
-		return mask.GetKey(pw)
+		return pw, nil
 	}
 
 	return "", errors.New("Error: No set password ")
@@ -134,5 +138,5 @@ func GetPassword() (string, error) {
 		return "", err
 	}
 
-	return mask.GetKey(pw)
+	return pw, nil
 }
