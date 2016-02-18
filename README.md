@@ -1,6 +1,6 @@
 txtmsk
 =======
-txtmsk encrypts the text.
+txtmsk encrypts the plain text.
 
 Mac OS X only !!!
 
@@ -18,18 +18,26 @@ Set Password (Mac OS X Keychain)
 
 Encrypt
 
-    $ echo "aaaaaaaaaaaaaaaaaaaa" | txtmsk
+    $ txtmsk aaaaaaaaaaaaaaaaaaaa
     GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
-    
+
+or Stdin
+
+    $ cat ~/.aws/credentials | txtmsk > credentials.txtmsk
+
 Decrypt
 
-    $ echo "GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc" | txtmsk -d
+    $ txtmsk -d GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
     aaaaaaaaaaaaaaaaaaaa
-    
+
+or Stdin
+
+    $ cat credentials.txtmsk | txtmsk > ~/.aws/credentials
+
 Help
 -----
     Usage:
-      txtmsk [-d] [-p] [-v]
+      txtmsk [-d] [-p] [-v] text
     
     Application Options:
       -d, --decrypt   Decrypt mode

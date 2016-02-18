@@ -2,14 +2,12 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
-	"github.com/Bowery/prompt"
 	"github.com/jessevdk/go-flags"
-	"github.com/lunixbochs/go-keychain"
 	"github.com/ngc224/mask"
 	"golang.org/x/crypto/ssh/terminal"
 	"os"
+	"strings"
 )
 
 type CLI struct {
@@ -30,7 +28,7 @@ func (cli *CLI) parseCmdopts() (*CommandlineOptions, []string, error) {
 
 	parser := flags.NewParser(opts, flags.Default)
 	parser.Name = APPLICATION_NAME
-	parser.Usage = "[-d] [-p] [-v]"
+	parser.Usage = "[-d] [-p] [-v] text"
 	args, err := parser.Parse()
 
 	if err != nil {
@@ -41,7 +39,7 @@ func (cli *CLI) parseCmdopts() (*CommandlineOptions, []string, error) {
 }
 
 func (cli *CLI) Run() error {
-	opts, _, err := cli.parseCmdopts()
+	opts, args, err := cli.parseCmdopts()
 
 	if err != nil {
 		return nil
@@ -62,15 +60,22 @@ func (cli *CLI) Run() error {
 		}
 	}
 
-	if terminal.IsTerminal(0) {
-		return nil
-	}
-
-	sc := bufio.NewScanner(os.Stdin)
 	var text string
 
-	for sc.Scan() {
-		text += sc.Text() + "\n"
+	if len(args) > 0 {
+		text = args[0]
+	} else {
+		if terminal.IsTerminal(0) {
+			return nil
+		}
+
+		sc := bufio.NewScanner(os.Stdin)
+
+		for sc.Scan() {
+			text += sc.Text() + "\n"
+		}
+
+		text = strings.TrimRight(text, "\n")
 	}
 
 	m, err := mask.NewMask(pw)
@@ -86,7 +91,7 @@ func (cli *CLI) Run() error {
 			return err
 		}
 
-		fmt.Print(decrypted_text)
+		fmt.Println(decrypted_text)
 		return nil
 	}
 
@@ -98,45 +103,4 @@ func (cli *CLI) Run() error {
 
 	fmt.Println(cipher_text)
 	return nil
-}
-
-func SetPassword() (string, error) {
-	stdin := os.Stdin
-	os.Stdin, _ = os.Open("/dev/tty")
-
-	for {
-		pw, err := prompt.Password("Set the password in Keychain: ")
-
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
-			break
-		}
-
-		if len(pw) > 32 {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "Password len 32 is over")
-			continue
-		}
-
-		keychain.Remove(APPLICATION_NAME, "")
-
-		if err := keychain.Add(APPLICATION_NAME, "", pw); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
-			continue
-		}
-
-		os.Stdin = stdin
-		return pw, nil
-	}
-
-	return "", errors.New("Error: No set password ")
-}
-
-func GetPassword() (string, error) {
-	pw, err := keychain.Find(APPLICATION_NAME, "")
-
-	if err != nil {
-		return "", err
-	}
-
-	return pw, nil
 }
