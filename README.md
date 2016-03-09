@@ -2,17 +2,17 @@ txtmsk
 =======
 txtmsk encrypts the plain text.
 
-Mac OS X only !!!
-
-
 Install
 -----
     $ brew install ngc224/txtmsk/txtmsk
 
-
 Usage
 -----
-Set Password (Mac OS X Keychain)
+Set Password
+
+- Mac OS X: Keychain
+- Linux: Kernel keyring (login session)
+
 
     $ txtmsk -p
 
@@ -21,18 +21,19 @@ Encrypt
     $ txtmsk aaaaaaaaaaaaaaaaaaaa
     GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
 
-or Stdin
-
-    $ cat ~/.aws/credentials | txtmsk > credentials.txtmsk
-
 Decrypt
 
     $ txtmsk -d GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
     aaaaaaaaaaaaaaaaaaaa
 
-or Stdin
+Encrypt stdin
 
-    $ cat credentials.txtmsk | txtmsk > ~/.aws/credentials
+    $ cat ~/.aws/credentials | txtmsk > credentials.txtmsk
+
+
+Decrypt stdin
+
+    $ cat credentials.txtmsk | txtmsk -d > ~/.aws/credentials
 
 Help
 -----
