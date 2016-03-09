@@ -48,7 +48,7 @@ Usage:
 
 Application Options:
   -d, --decrypt   Decrypt mode
-  -p, --password  Set the password in Keychain
+  -p, --password  Set the password
   -v, --version   Show program's version number
 
 Help Options:

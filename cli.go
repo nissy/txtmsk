@@ -19,7 +19,7 @@ func NewCLI() *CLI {
 
 type CommandlineOptions struct {
 	Decrypt  bool `short:"d" long:"decrypt"  description:"Decrypt mode"`
-	Password bool `short:"p" long:"password" description:"Set the password in Keychain"`
+	Password bool `short:"p" long:"password" description:"Set the password"`
 	Version  bool `short:"v" long:"version"  description:"Show program's version number"`
 }
 

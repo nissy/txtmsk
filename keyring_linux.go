@@ -13,7 +13,7 @@ func SetPassword() (string, error) {
 	os.Stdin, _ = os.Open("/dev/tty")
 
 	for {
-		pw, err := prompt.Password("Set the password in Keychain: ")
+		pw, err := prompt.Password("Set the password in Keyring: ")
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
