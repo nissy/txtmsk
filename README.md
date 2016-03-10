@@ -25,7 +25,8 @@ GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
 or
 
 ```
-$ cat ~/.aws/credentials | txtmsk > credentials.txtmsk
+$ echo aaaaaaaaaaaaaaaaaaaa | txtmsk
+GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
 ```
 
 ### Decrypt
@@ -37,7 +38,8 @@ aaaaaaaaaaaaaaaaaaaa
 or
 
 ```
-$ cat credentials.txtmsk | txtmsk -d > ~/.aws/credentials
+$ echo GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc | txtmsk -d
+aaaaaaaaaaaaaaaaaaaa
 ```
 
 ### Help
