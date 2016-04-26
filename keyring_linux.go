@@ -31,7 +31,7 @@ func SetPassword() (string, error) {
 			return "", err
 		}
 
-		if _, err := keyring.Add(APPLICATION_NAME, []byte(pw)); err != nil {
+		if _, err := keyring.Add(ApplicationName, []byte(pw)); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
 			continue
 		}
@@ -52,7 +52,7 @@ func GetPassword() (string, error) {
 		return "", err
 	}
 
-	key, err := keyring.Search(APPLICATION_NAME)
+	key, err := keyring.Search(ApplicationName)
 
 	if err != nil {
 		return "", err

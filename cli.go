@@ -4,31 +4,44 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/jessevdk/go-flags"
-	"github.com/ngc224/mask"
+	"github.com/ngc224/txtmsk/mask"
 	"golang.org/x/crypto/ssh/terminal"
 	"os"
 	"strings"
 )
 
-type CLI struct {
-}
-
-func NewCLI() *CLI {
-	return &CLI{}
-}
-
-type CommandlineOptions struct {
+type Command struct {
 	Decrypt  bool `short:"d" long:"decrypt"  description:"Decrypt mode"`
 	Password bool `short:"p" long:"password" description:"Set the password"`
 	Version  bool `short:"v" long:"version"  description:"Show program's version number"`
 }
 
-func (cli *CLI) parseCmdopts() (*CommandlineOptions, []string, error) {
-	opts := &CommandlineOptions{}
+type CLI struct {
+	Command *Command
+	Args    []string
+}
+
+var text string
+
+func NewCLI() (*CLI, error) {
+	opts, args, err := ParseCmdopts()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &CLI{
+		Command: opts,
+		Args:    args,
+	}, nil
+}
+
+func ParseCmdopts() (*Command, []string, error) {
+	opts := &Command{}
 
 	parser := flags.NewParser(opts, flags.Default)
-	parser.Name = APPLICATION_NAME
-	parser.Usage = "[-d] [-p] [-v] text"
+	parser.Name = ApplicationName
+	parser.Usage = "[-d] [-p] [-h] [-v] TEXT"
 	args, err := parser.Parse()
 
 	if err != nil {
@@ -39,20 +52,14 @@ func (cli *CLI) parseCmdopts() (*CommandlineOptions, []string, error) {
 }
 
 func (cli *CLI) Run() error {
-	opts, args, err := cli.parseCmdopts()
-
-	if err != nil {
-		return nil
-	}
-
-	if opts.Version {
-		fmt.Println("Version " + VERSION)
+	if cli.Command.Version {
+		fmt.Println("Version " + Version)
 		return nil
 	}
 
 	pw, err := GetPassword()
 
-	if opts.Password || err != nil {
+	if cli.Command.Password || err != nil {
 		pw, err = SetPassword()
 
 		if err != nil {
@@ -60,10 +67,8 @@ func (cli *CLI) Run() error {
 		}
 	}
 
-	var text string
-
-	if len(args) > 0 {
-		text = args[0]
+	if len(cli.Args) > 0 {
+		text = cli.Args[0]
 	} else {
 		if terminal.IsTerminal(0) {
 			return nil
@@ -84,7 +89,7 @@ func (cli *CLI) Run() error {
 		return err
 	}
 
-	if opts.Decrypt {
+	if cli.Command.Decrypt {
 		decrypted_text, err := m.Decrypt(text)
 
 		if err != nil {

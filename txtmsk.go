@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	APPLICATION_NAME = "txtmsk"
-	VERSION          = "1.0.3"
+	ApplicationName = "txtmsk"
+	Version         = "1.0.3"
 )
 
 func main() {
@@ -18,7 +18,12 @@ func main() {
 func _main() int {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	cli := NewCLI()
+	cli, err := NewCLI()
+
+	if err != nil {
+		return 0
+	}
+
 	if err := cli.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %s\n", err)
 		return 1

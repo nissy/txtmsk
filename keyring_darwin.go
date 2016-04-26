@@ -25,9 +25,9 @@ func SetPassword() (string, error) {
 			continue
 		}
 
-		keychain.Remove(APPLICATION_NAME, "")
+		keychain.Remove(ApplicationName, "")
 
-		if err := keychain.Add(APPLICATION_NAME, "", pw); err != nil {
+		if err := keychain.Add(ApplicationName, "", pw); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
 			continue
 		}
@@ -40,7 +40,7 @@ func SetPassword() (string, error) {
 }
 
 func GetPassword() (string, error) {
-	pw, err := keychain.Find(APPLICATION_NAME, "")
+	pw, err := keychain.Find(ApplicationName, "")
 
 	if err != nil {
 		return "", err
