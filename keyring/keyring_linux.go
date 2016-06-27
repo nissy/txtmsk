@@ -1,11 +1,12 @@
-package main
+package keyring
 
 import (
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/Bowery/prompt"
 	"github.com/jsipprell/keyctl"
-	"os"
 )
 
 func SetPassword() (string, error) {
@@ -13,7 +14,7 @@ func SetPassword() (string, error) {
 	os.Stdin, _ = os.Open("/dev/tty")
 
 	for {
-		pw, err := prompt.Password("Set the password in Keyring: ")
+		pw, err := prompt.Password("Set the password in keyring: ")
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
@@ -21,7 +22,7 @@ func SetPassword() (string, error) {
 		}
 
 		if len(pw) > 32 {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "Password len 32 is over")
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "password len 32 is over")
 			continue
 		}
 
@@ -40,7 +41,7 @@ func SetPassword() (string, error) {
 		return pw, nil
 	}
 
-	return "", errors.New("Error: No set password ")
+	return "", errors.New("no set password")
 }
 
 func GetPassword() (string, error) {

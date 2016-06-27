@@ -45,14 +45,9 @@ aaaaaaaaaaaaaaaaaaaa
 ### Help
 
 ```
-Usage:
-  txtmsk [-d] [-p] [-v] text
-
-Application Options:
-  -d, --decrypt   Decrypt mode
-  -p, --password  Set the password
-  -v, --version   Show program's version number
-
-Help Options:
-  -h, --help      Show this help message
+Usage: txtmsk [options] text
+  -d    decrypt mode
+  -h    this help
+  -p    set password
+  -v    show version and exit
 ```

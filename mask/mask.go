@@ -7,6 +7,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
+	"unicode/utf8"
 )
 
 type Mask struct {
@@ -14,7 +15,7 @@ type Mask struct {
 	src      []byte
 }
 
-func NewMask(password string) (*Mask, error) {
+func New(password string) (*Mask, error) {
 	m := &Mask{
 		Password: password,
 	}
@@ -40,9 +41,9 @@ func (m *Mask) setSrc() error {
 	case (l < 32):
 		n = 32
 	case (l > 32):
-		return errors.New("Error: password len 32 is over")
+		return errors.New("password len 32 is over")
 	case (l == 0):
-		return errors.New("Error: password is nil")
+		return errors.New("password is nil")
 	}
 
 	for i := l; i < n; i++ {
@@ -62,20 +63,20 @@ func (m *Mask) Encrypt(text string) (string, error) {
 		return "", err
 	}
 
-	cipher_text := make([]byte, aes.BlockSize+len(src))
-	iv := cipher_text[:aes.BlockSize]
+	encrypted := make([]byte, aes.BlockSize+len(src))
+	iv := encrypted[:aes.BlockSize]
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", err
 	}
 
-	encrypt_stream := cipher.NewCTR(block, iv)
-	encrypt_stream.XORKeyStream(cipher_text[aes.BlockSize:], src)
+	encryptStream := cipher.NewCTR(block, iv)
+	encryptStream.XORKeyStream(encrypted[aes.BlockSize:], src)
 
-	return base64.StdEncoding.EncodeToString(cipher_text), nil
+	return base64.StdEncoding.EncodeToString(encrypted), nil
 }
 
 func (m *Mask) Decrypt(text string) (string, error) {
-	cipher_text, err := base64.StdEncoding.DecodeString(text)
+	src, err := base64.StdEncoding.DecodeString(text)
 
 	if err != nil {
 		return "", err
@@ -87,9 +88,15 @@ func (m *Mask) Decrypt(text string) (string, error) {
 		return "", err
 	}
 
-	decrypted_text := make([]byte, len(cipher_text[aes.BlockSize:]))
-	decrypt_stream := cipher.NewCTR(block, cipher_text[:aes.BlockSize])
-	decrypt_stream.XORKeyStream(decrypted_text, cipher_text[aes.BlockSize:])
+	decrypted := make([]byte, len(src[aes.BlockSize:]))
+	decryptStream := cipher.NewCTR(block, src[:aes.BlockSize])
+	decryptStream.XORKeyStream(decrypted, src[aes.BlockSize:])
 
-	return string(decrypted_text), nil
+	decryptedText := string(decrypted)
+
+	if utf8.ValidString(decryptedText) {
+		return decryptedText, nil
+	}
+
+	return "", errors.New("not decrypt text")
 }
