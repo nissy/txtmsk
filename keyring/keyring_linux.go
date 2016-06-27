@@ -22,7 +22,7 @@ func SetPassword() (string, error) {
 		}
 
 		if len(pw) > 32 {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "password len 32 is over")
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "Password len 32 is over")
 			continue
 		}
 
@@ -41,7 +41,7 @@ func SetPassword() (string, error) {
 		return pw, nil
 	}
 
-	return "", errors.New("no set password")
+	return "", errors.New("No set password")
 }
 
 func GetPassword() (string, error) {

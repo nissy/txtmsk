@@ -32,7 +32,7 @@ func (key *Keyring) Set() (string, error) {
 		}
 
 		if len(pw) > 32 {
-			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "password len 32 is over")
+			fmt.Fprintf(os.Stderr, "Error: %s\n\n", "Password len 32 is over")
 			continue
 		}
 
@@ -47,7 +47,7 @@ func (key *Keyring) Set() (string, error) {
 		return pw, nil
 	}
 
-	return "", errors.New("no set password")
+	return "", errors.New("No set password")
 }
 
 func (key *Keyring) Get() (string, error) {

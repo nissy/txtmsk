@@ -43,7 +43,6 @@ func cli() error {
 	}
 
 	key := keyring.New(applicationName)
-
 	pw, err := key.Get()
 
 	if cmd.Password || err != nil {

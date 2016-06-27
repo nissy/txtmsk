@@ -41,9 +41,9 @@ func (m *Mask) setSrc() error {
 	case (l < 32):
 		n = 32
 	case (l > 32):
-		return errors.New("password len 32 is over")
+		return errors.New("Password len 32 is over")
 	case (l == 0):
-		return errors.New("password is nil")
+		return errors.New("Password is nil")
 	}
 
 	for i := l; i < n; i++ {
@@ -56,6 +56,10 @@ func (m *Mask) setSrc() error {
 }
 
 func (m *Mask) Encrypt(text string) (string, error) {
+	if !utf8.ValidString(text) {
+		return "", errors.New("Not encrypt the text")
+	}
+
 	src := []byte(text)
 	block, err := aes.NewCipher(m.src)
 
@@ -98,5 +102,5 @@ func (m *Mask) Decrypt(text string) (string, error) {
 		return decryptedText, nil
 	}
 
-	return "", errors.New("not decrypt text")
+	return "", errors.New("Not decrypt the text")
 }
