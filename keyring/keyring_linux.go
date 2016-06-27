@@ -9,7 +9,17 @@ import (
 	"github.com/jsipprell/keyctl"
 )
 
-func SetPassword() (string, error) {
+type Keyring struct {
+	Name string
+}
+
+func New(name string) *Keyring {
+	return &Keyring{
+		Name: name,
+	}
+}
+
+func (key *Keyring) Set() (string, error) {
 	stdin := os.Stdin
 	os.Stdin, _ = os.Open("/dev/tty")
 
@@ -32,7 +42,7 @@ func SetPassword() (string, error) {
 			return "", err
 		}
 
-		if _, err := keyring.Add(ApplicationName, []byte(pw)); err != nil {
+		if _, err := keyring.Add(key.Name, []byte(pw)); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
 			continue
 		}
@@ -44,22 +54,22 @@ func SetPassword() (string, error) {
 	return "", errors.New("No set password")
 }
 
-func GetPassword() (string, error) {
-	keyring, err := keyctl.SessionKeyring()
+func (key *Keyring) Get() (string, error) {
+	session, err := keyctl.SessionKeyring()
 
-	keyring.Id()
-
-	if err != nil {
-		return "", err
-	}
-
-	key, err := keyring.Search(ApplicationName)
+	session.Id()
 
 	if err != nil {
 		return "", err
 	}
 
-	pw, err := key.Get()
+	sessionKey, err := session.Search(key.Name)
+
+	if err != nil {
+		return "", err
+	}
+
+	pw, err := sessionKey.Get()
 
 	if err != nil {
 		return "", err
