@@ -1,6 +1,8 @@
 package mask
 
 import (
+	"bytes"
+	"compress/zlib"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -57,26 +59,32 @@ func (m *Mask) setSrc() error {
 
 func (m *Mask) Encrypt(text string) (string, error) {
 	if !utf8.ValidString(text) {
-		return "", errors.New("Not encrypt the text")
+		return "", errors.New("Not a text")
 	}
 
-	src := []byte(text)
+	src := compress([]byte(text))
+
 	block, err := aes.NewCipher(m.src)
 
 	if err != nil {
 		return "", err
 	}
 
-	encrypted := make([]byte, aes.BlockSize+len(src))
-	iv := encrypted[:aes.BlockSize]
+	encSrc := make([]byte, aes.BlockSize+len(src))
+	iv := encSrc[:aes.BlockSize]
+
 	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
 		return "", err
 	}
 
-	encryptStream := cipher.NewCTR(block, iv)
-	encryptStream.XORKeyStream(encrypted[aes.BlockSize:], src)
+	encStream := cipher.NewCTR(block, iv)
+	encStream.XORKeyStream(encSrc[aes.BlockSize:], src)
 
-	return base64.StdEncoding.EncodeToString(encrypted), nil
+	if err != nil {
+		return "", err
+	}
+
+	return base64.StdEncoding.EncodeToString(encSrc), nil
 }
 
 func (m *Mask) Decrypt(text string) (string, error) {
@@ -92,15 +100,49 @@ func (m *Mask) Decrypt(text string) (string, error) {
 		return "", err
 	}
 
-	decrypted := make([]byte, len(src[aes.BlockSize:]))
-	decryptStream := cipher.NewCTR(block, src[:aes.BlockSize])
-	decryptStream.XORKeyStream(decrypted, src[aes.BlockSize:])
+	decSrc := make([]byte, len(src[aes.BlockSize:]))
+	decStream := cipher.NewCTR(block, src[:aes.BlockSize])
+	decStream.XORKeyStream(decSrc, src[aes.BlockSize:])
 
-	decryptedText := string(decrypted)
+	decUnCompSrc, err := unCompress(decSrc)
 
-	if utf8.ValidString(decryptedText) {
-		return decryptedText, nil
+	if err != nil {
+		return "", err
+	}
+
+	decText := string(decUnCompSrc)
+
+	if utf8.ValidString(decText) {
+		return decText, nil
 	}
 
 	return "", errors.New("Not decrypt the text")
+}
+
+func compress(src []byte) []byte {
+	var buf bytes.Buffer
+
+	w := zlib.NewWriter(&buf)
+	w.Write(src)
+	w.Close()
+
+	return buf.Bytes()
+}
+
+func unCompress(src []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	var dstBuf bytes.Buffer
+
+	buf.Write(src)
+
+	r, err := zlib.NewReader(&buf)
+
+	if err != nil {
+		return nil, err
+	}
+
+	io.Copy(&dstBuf, r)
+	r.Close()
+
+	return dstBuf.Bytes(), nil
 }
