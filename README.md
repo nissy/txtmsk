@@ -1,5 +1,5 @@
 # txtmsk
-txtmsk encrypts and compress the plain text.
+txtmsk is encrypts and compress the plain text.
 
 ## Install
 ```
@@ -18,28 +18,28 @@ $ txtmsk -p
 
 ### Mask
 ```
-$ txtmsk aaaaaaaaaaaaaaaaaaaa
-GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
+$ txtmsk aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+mtf1fFlPw9NU7lH56c01hgtD+PAp94SYY7rbSq5HYQ==
 ```
 
 or
 
 ```
-$ echo aaaaaaaaaaaaaaaaaaaa | txtmsk
-GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
+$ echo aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa | txtmsk
+mtf1fFlPw9NU7lH56c01hgtD+PAp94SYY7rbSq5HYQ==
 ```
 
-### UnMask
+### Unmask
 ```
-$ txtmsk -u GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
-aaaaaaaaaaaaaaaaaaaa
+$ txtmsk -u mtf1fFlPw9NU7lH56c01hgtD+PAp94SYY7rbSq5HYQ==
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
 or
 
 ```
-$ echo GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc | txtmsk -u
-aaaaaaaaaaaaaaaaaaaa
+$ echo mtf1fFlPw9NU7lH56c01hgtD+PAp94SYY7rbSq5HYQ== | txtmsk -u
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 
 ### Help
