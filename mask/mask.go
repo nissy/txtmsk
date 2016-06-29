@@ -13,48 +13,41 @@ import (
 )
 
 type Mask struct {
-	Password string
-	key      []byte
+	password string
+	realkey  []byte
 }
 
 func New(password string) (*Mask, error) {
-	m := &Mask{
-		Password: password,
-	}
+	realkey, err := newRealkey(password)
 
-	if err := m.setKey(); err != nil {
+	if err != nil {
 		return nil, err
 	}
 
-	return m, nil
+	return &Mask{
+		password: password,
+		realkey:  realkey,
+	}, nil
 }
 
-func (m *Mask) setKey() error {
-	pw := m.Password
-
-	l := len(pw)
+func newRealkey(key string) ([]byte, error) {
+	l := len(key)
 	n := 0
 
 	switch {
-	case (l < 16):
-		n = 16
-	case (l < 24):
-		n = 24
 	case (l < 32):
 		n = 32
 	case (l > 32):
-		return errors.New("Password len 32 is over")
+		return nil, errors.New("Password len 32 is over")
 	case (l == 0):
-		return errors.New("Password is nil")
+		return nil, errors.New("Password is null")
 	}
 
 	for i := l; i < n; i++ {
-		pw += "*"
+		key += "*"
 	}
 
-	m.key = []byte(pw)
-
-	return nil
+	return []byte(key), nil
 }
 
 func (m *Mask) Mask(text string) (string, error) {
@@ -101,7 +94,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 }
 
 func (m *Mask) encrypt(src []byte) ([]byte, error) {
-	block, err := aes.NewCipher(m.key)
+	block, err := aes.NewCipher(m.realkey)
 
 	if err != nil {
 		return nil, err
@@ -125,7 +118,7 @@ func (m *Mask) encrypt(src []byte) ([]byte, error) {
 }
 
 func (m *Mask) decrypt(src []byte) ([]byte, error) {
-	block, err := aes.NewCipher(m.key)
+	block, err := aes.NewCipher(m.realkey)
 
 	if err != nil {
 		return nil, err
