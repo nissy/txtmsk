@@ -1,5 +1,5 @@
 # txtmsk
-txtmsk encrypts the plain text.
+txtmsk encrypts and compress the plain text.
 
 ## Install
 ```
@@ -16,7 +16,7 @@ $ brew install ngc224/txtmsk/txtmsk
 $ txtmsk -p
 ```
 
-### Encrypt
+### Mask
 ```
 $ txtmsk aaaaaaaaaaaaaaaaaaaa
 GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
@@ -29,16 +29,16 @@ $ echo aaaaaaaaaaaaaaaaaaaa | txtmsk
 GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
 ```
 
-### Decrypt
+### UnMask
 ```
-$ txtmsk -d GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
+$ txtmsk -u GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc
 aaaaaaaaaaaaaaaaaaaa
 ```
 
 or
 
 ```
-$ echo GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc | txtmsk -d
+$ echo GFKm0AD9g0yyUdCc6cq44sX+D6CAyWnqzoxa4jU0rZdC4ZOc | txtmsk -u
 aaaaaaaaaaaaaaaaaaaa
 ```
 
@@ -46,8 +46,8 @@ aaaaaaaaaaaaaaaaaaaa
 
 ```
 Usage: txtmsk [options] text
-  -d    decrypt mode
   -h    this help
   -p    set password
+  -u    unmask mode
   -v    show version and exit
 ```

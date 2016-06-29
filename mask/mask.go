@@ -14,7 +14,7 @@ import (
 
 type Mask struct {
 	Password string
-	src      []byte
+	key      []byte
 }
 
 func New(password string) (*Mask, error) {
@@ -22,14 +22,14 @@ func New(password string) (*Mask, error) {
 		Password: password,
 	}
 
-	if err := m.setSrc(); err != nil {
+	if err := m.setKey(); err != nil {
 		return nil, err
 	}
 
 	return m, nil
 }
 
-func (m *Mask) setSrc() error {
+func (m *Mask) setKey() error {
 	pw := m.Password
 
 	l := len(pw)
@@ -52,71 +52,90 @@ func (m *Mask) setSrc() error {
 		pw += "*"
 	}
 
-	m.src = []byte(pw)
+	m.key = []byte(pw)
 
 	return nil
 }
 
-func (m *Mask) Encrypt(text string) (string, error) {
+func (m *Mask) Mask(text string) (string, error) {
 	if !utf8.ValidString(text) {
 		return "", errors.New("Not a text")
 	}
 
 	src := compress([]byte(text))
-
-	block, err := aes.NewCipher(m.src)
-
-	if err != nil {
-		return "", err
-	}
-
-	encSrc := make([]byte, aes.BlockSize+len(src))
-	iv := encSrc[:aes.BlockSize]
-
-	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
-		return "", err
-	}
-
-	encStream := cipher.NewCTR(block, iv)
-	encStream.XORKeyStream(encSrc[aes.BlockSize:], src)
+	src, err := m.encrypt(src)
 
 	if err != nil {
 		return "", err
 	}
 
-	return base64.StdEncoding.EncodeToString(encSrc), nil
+	return base64.StdEncoding.EncodeToString(src), nil
 }
 
-func (m *Mask) Decrypt(text string) (string, error) {
+func (m *Mask) UnMask(text string) (string, error) {
 	src, err := base64.StdEncoding.DecodeString(text)
 
 	if err != nil {
 		return "", err
 	}
 
-	block, err := aes.NewCipher(m.src)
+	src, err = m.decrypt(src)
 
 	if err != nil {
 		return "", err
 	}
 
-	decSrc := make([]byte, len(src[aes.BlockSize:]))
-	decStream := cipher.NewCTR(block, src[:aes.BlockSize])
-	decStream.XORKeyStream(decSrc, src[aes.BlockSize:])
-
-	decUnCompSrc, err := unCompress(decSrc)
+	src, err = unCompress(src)
 
 	if err != nil {
 		return "", err
 	}
 
-	decText := string(decUnCompSrc)
+	dText := string(src)
 
-	if utf8.ValidString(decText) {
-		return decText, nil
+	if utf8.ValidString(dText) {
+		return dText, nil
 	}
 
 	return "", errors.New("Not decrypt the text")
+}
+
+func (m *Mask) encrypt(src []byte) ([]byte, error) {
+	block, err := aes.NewCipher(m.key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	eSrc := make([]byte, aes.BlockSize+len(src))
+	iv := eSrc[:aes.BlockSize]
+
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return nil, err
+	}
+
+	stream := cipher.NewCTR(block, iv)
+	stream.XORKeyStream(eSrc[aes.BlockSize:], src)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return eSrc, nil
+}
+
+func (m *Mask) decrypt(src []byte) ([]byte, error) {
+	block, err := aes.NewCipher(m.key)
+
+	if err != nil {
+		return nil, err
+	}
+
+	dSrc := make([]byte, len(src[aes.BlockSize:]))
+	stream := cipher.NewCTR(block, src[:aes.BlockSize])
+	stream.XORKeyStream(dSrc, src[aes.BlockSize:])
+
+	return dSrc, nil
 }
 
 func compress(src []byte) []byte {

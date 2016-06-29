@@ -75,8 +75,8 @@ func cli() error {
 		return err
 	}
 
-	if cmd.Decrypt {
-		d_text, err := m.Decrypt(text)
+	if cmd.UnMask {
+		d_text, err := m.UnMask(text)
 
 		if err != nil {
 			return err
@@ -86,7 +86,7 @@ func cli() error {
 		return nil
 	}
 
-	e_text, err := m.Encrypt(text)
+	e_text, err := m.Mask(text)
 
 	if err != nil {
 		return err

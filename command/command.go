@@ -7,14 +7,14 @@ import (
 )
 
 var (
-	decrypt  = flag.Bool("d", false, "decrypt mode")
+	unmask   = flag.Bool("u", false, "unmask mode")
 	password = flag.Bool("p", false, "set password")
 	version  = flag.Bool("v", false, "show version and exit")
 	help     = flag.Bool("h", false, "this help")
 )
 
 type Command struct {
-	Decrypt  bool
+	UnMask   bool
 	Password bool
 	Version  bool
 	Help     bool
@@ -25,7 +25,7 @@ func New() *Command {
 	flag.Parse()
 
 	return &Command{
-		Decrypt:  *decrypt,
+		UnMask:   *unmask,
 		Password: *password,
 		Version:  *version,
 		Help:     *help,
