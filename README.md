@@ -53,41 +53,41 @@ I am a false phimosis
 
 Writing inline tag
 ```
-<txtmsk>mask_text</txtmsk>
+<msk>text</msk>
 ```
 
 Text to inline mask
 ```
 $ cat secret.txt
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
 
 $ cat secret.txt | txtmsk
-I am a <txtmsk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</txtmsk>
-I am a <txtmsk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</txtmsk>
-I am a <txtmsk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</txtmsk>
-I am a <txtmsk>ik02zV8PA2QxXV379KV0KRCVastEoJNVqkqEHyTKrb45Y05Rd142cQJn</txtmsk>
-I am a <txtmsk>OK44PxypCUO7KvYH+U8iyaYRzvaoqcTh8yHMkvcenUNP+6seRvVgWLP8</txtmsk>
+I am a <msk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</msk>
+I am a <msk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</msk>
+I am a <msk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</msk>
+I am a <msk>ik02zV8PA2QxXV379KV0KRCVastEoJNVqkqEHyTKrb45Y05Rd142cQJn</msk>
+I am a <msk>OK44PxypCUO7KvYH+U8iyaYRzvaoqcTh8yHMkvcenUNP+6seRvVgWLP8</msk>
 ```
 
 Text to inline unmask ("-t" option is trim inline tags)
 ```
 $ cat secret.txtmsk.txt
-I am a <txtmsk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</txtmsk>
-I am a <txtmsk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</txtmsk>
-I am a <txtmsk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</txtmsk>
-I am a <txtmsk>ik02zV8PA2QxXV379KV0KRCVastEoJNVqkqEHyTKrb45Y05Rd142cQJn</txtmsk>
-I am a <txtmsk>OK44PxypCUO7KvYH+U8iyaYRzvaoqcTh8yHMkvcenUNP+6seRvVgWLP8</txtmsk>
+I am a <msk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</msk>
+I am a <msk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</msk>
+I am a <msk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</msk>
+I am a <msk>ik02zV8PA2QxXV379KV0KRCVastEoJNVqkqEHyTKrb45Y05Rd142cQJn</msk>
+I am a <msk>OK44PxypCUO7KvYH+U8iyaYRzvaoqcTh8yHMkvcenUNP+6seRvVgWLP8</msk>
 
 $ cat secret.txtmsk.txt | txtmsk -u
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
-I am a <txtmsk>false phimosis</txtmsk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
+I am a <msk>false phimosis</msk>
 
 $ cat secret.txtmsk.txt | txtmsk -u -t
 I am a false phimosis

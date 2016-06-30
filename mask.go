@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	inlineStartTag = "<" + applicationName + ">"
-	inlineEndTag   = "</" + applicationName + ">"
+	tagName        = "msk"
+	inlineStartTag = "<" + tagName + ">"
+	inlineEndTag   = "</" + tagName + ">"
 )
 
 func runMask(m *mask.Mask, text string) (string, error) {

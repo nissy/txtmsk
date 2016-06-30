@@ -36,13 +36,13 @@ func (key *Keyring) Set() (string, error) {
 			continue
 		}
 
-		keyring, err := keyctl.SessionKeyring()
+		session, err := keyctl.SessionKeyring()
 
 		if err != nil {
 			return "", err
 		}
 
-		if _, err := keyring.Add(key.Name, []byte(pw)); err != nil {
+		if _, err := session.Add(key.Name, []byte(pw)); err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n\n", err)
 			continue
 		}

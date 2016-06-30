@@ -14,7 +14,10 @@ import (
 	"unicode/utf8"
 )
 
-var ErrDecrypt = errors.New("Not decrypt the text")
+var (
+	ErrNotDecrypt = errors.New("Not decrypt the text")
+	ErrNotMasked  = errors.New("Not masked the text")
+)
 
 type Mask struct {
 	password string
@@ -73,13 +76,13 @@ func (m *Mask) UnMask(text string) (string, error) {
 	src, err := base64.RawStdEncoding.DecodeString(text)
 
 	if err != nil {
-		return "", err
+		return "", ErrNotMasked
 	}
 
 	//TODO panic
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", errors.New("Not masked text"))
+			fmt.Fprintf(os.Stderr, "Error: %s\n", ErrNotMasked)
 			os.Exit(1)
 		}
 	}()
@@ -94,7 +97,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 
 	if err != nil {
 		if err == zlib.ErrHeader {
-			return "", ErrDecrypt
+			return "", ErrNotDecrypt
 		}
 
 		return "", err
@@ -106,7 +109,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 		return dText, nil
 	}
 
-	return "", ErrDecrypt
+	return "", ErrNotDecrypt
 }
 
 func (m *Mask) encrypt(src []byte) ([]byte, error) {
