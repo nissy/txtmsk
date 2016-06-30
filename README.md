@@ -1,7 +1,9 @@
 # txtmsk
 txtmsk is encrypts and compress the plain text.
 
-encryption is AES256
+encryption is aes256
+
+compress is zlib
 
 ## Install
 ```
@@ -27,25 +29,25 @@ $ txtmsk -p
 
 Text to mask
 ```
-$ txtmsk "I am a false phimosis"
+$ txtmsk 'I am a false phimosis'
 lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA
 ```
 
 Text to unmask
 ```
-$ txtmsk -u "lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA"
+$ txtmsk -u 'lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA'
 I am a false phimosis
 ```
 
 Text to mask (stdin)
 ```
-$ echo "I am a false phimosis" | txtmsk
+$ echo 'I am a false phimosis' | txtmsk
 lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA
 ```
 
 Text to unmask (stdin)
 ```
-$ echo "lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA" | txtmsk -u
+$ echo 'lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA' | txtmsk -u
 I am a false phimosis
 ```
 
