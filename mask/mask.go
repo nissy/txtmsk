@@ -12,6 +12,8 @@ import (
 	"unicode/utf8"
 )
 
+var ErrDecrypt = errors.New("Not decrypt the text")
+
 type Mask struct {
 	password string
 	realkey  []byte
@@ -81,6 +83,10 @@ func (m *Mask) UnMask(text string) (string, error) {
 	src, err = unCompress(src)
 
 	if err != nil {
+		if err == zlib.ErrHeader {
+			return "", ErrDecrypt
+		}
+
 		return "", err
 	}
 
@@ -90,7 +96,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 		return dText, nil
 	}
 
-	return "", errors.New("Not decrypt the text")
+	return "", ErrDecrypt
 }
 
 func (m *Mask) encrypt(src []byte) ([]byte, error) {

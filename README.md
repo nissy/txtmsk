@@ -65,7 +65,7 @@ I am a <txtmsk>false phimosis</txtmsk>
 I am a <txtmsk>false phimosis</txtmsk>
 I am a <txtmsk>false phimosis</txtmsk>
 
-$ cat ~/Desktop/secret.txt | txtmsk                                                                                                                                                [~:19:16]
+$ cat secret.txt | txtmsk                                                                                                                                                [~:19:16]
 I am a <txtmsk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</txtmsk>
 I am a <txtmsk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</txtmsk>
 I am a <txtmsk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</txtmsk>
