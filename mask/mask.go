@@ -62,11 +62,11 @@ func (m *Mask) Mask(text string) (string, error) {
 		return "", err
 	}
 
-	return base64.StdEncoding.EncodeToString(src), nil
+	return base64.RawStdEncoding.EncodeToString(src), nil
 }
 
 func (m *Mask) UnMask(text string) (string, error) {
-	src, err := base64.StdEncoding.DecodeString(text)
+	src, err := base64.RawStdEncoding.DecodeString(text)
 
 	if err != nil {
 		return "", err
