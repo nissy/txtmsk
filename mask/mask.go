@@ -8,7 +8,9 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"fmt"
 	"io"
+	"os"
 	"unicode/utf8"
 )
 
@@ -73,6 +75,14 @@ func (m *Mask) UnMask(text string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	//TODO panic
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Fprintf(os.Stderr, "Error: %s\n", errors.New("Not masked text"))
+			os.Exit(1)
+		}
+	}()
 
 	src, err = m.decrypt(src)
 
