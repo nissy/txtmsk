@@ -15,7 +15,7 @@ import (
 const applicationName = "txtmsk"
 
 func main() {
-	os.Exit(exitcode(cli()))
+	os.Exit(exitcode(run()))
 }
 
 func exitcode(err error) int {
@@ -27,7 +27,7 @@ func exitcode(err error) int {
 	return 0
 }
 
-func cli() error {
+func run() error {
 	cmd := command.New()
 
 	if cmd.Version {
@@ -76,8 +76,26 @@ func cli() error {
 	}
 
 	if cmd.UnMask {
-		return runUnMask(m, text, applicationName)
+		umText, err := runUnMask(m, text)
+
+		if err != nil {
+			return err
+		}
+
+		if cmd.Trim {
+			umText = trimInLineTag(umText)
+		}
+
+		fmt.Println(umText)
+		return nil
 	}
 
-	return runMask(m, text, applicationName)
+	mText, err := runMask(m, text)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(mText)
+	return nil
 }
