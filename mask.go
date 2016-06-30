@@ -8,7 +8,7 @@ import (
 	"github.com/ngc224/txtmsk/mask"
 )
 
-func runMask(m *mask.Mask, text string, tagname string) string {
+func runMask(m *mask.Mask, text string, tagname string) error {
 	mText, err := inLineMask(m, text, tagname)
 
 	if err != nil {
@@ -17,7 +17,7 @@ func runMask(m *mask.Mask, text string, tagname string) string {
 
 	if mText != text {
 		fmt.Println(mText)
-		return mText
+		return nil
 	}
 
 	mText, err = m.Mask(text)
