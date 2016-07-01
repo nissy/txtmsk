@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"unicode/utf8"
 )
 
@@ -73,6 +74,10 @@ func (m *Mask) Mask(text string) (string, error) {
 }
 
 func (m *Mask) UnMask(text string) (string, error) {
+	if !isMaskText(text) {
+		return "", ErrNotMasked
+	}
+
 	src, err := base64.RawStdEncoding.DecodeString(text)
 
 	if err != nil {
@@ -82,7 +87,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 	//TODO panic
 	defer func() {
 		if err := recover(); err != nil {
-			fmt.Fprintf(os.Stderr, "Error: %s\n", ErrNotMasked)
+			fmt.Fprintf(os.Stderr, "Error: %s\n", ErrNotDecrypt)
 			os.Exit(1)
 		}
 	}()
@@ -176,4 +181,12 @@ func unCompress(src []byte) ([]byte, error) {
 	r.Close()
 
 	return dstBuf.Bytes(), nil
+}
+
+func isMaskText(text string) bool {
+	if len(text) < 40 {
+		return false
+	}
+
+	return regexp.MustCompile(`^[A-Za-z0-9/+]*=*$`).MatchString(text)
 }
