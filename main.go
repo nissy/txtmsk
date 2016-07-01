@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/ngc224/txtmsk/command"
-	"github.com/ngc224/txtmsk/keyring"
+	"github.com/ngc224/txtmsk/keystore"
 	"github.com/ngc224/txtmsk/mask"
 	"golang.org/x/crypto/ssh/terminal"
 )
@@ -40,7 +40,7 @@ func run() error {
 		return nil
 	}
 
-	key := keyring.New(applicationName)
+	key := keystore.New(applicationName)
 	pw, err := key.Get()
 
 	if cmd.Password || err != nil {
