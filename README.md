@@ -19,7 +19,7 @@ $ brew install ngc224/txtmsk/txtmsk
 #### Set password
 
 - Mac OS X: Keychain
-- Linux: Kernel keyring (login session)
+- Linux: Filebase
 
 ```
 $ txtmsk -p
@@ -27,27 +27,26 @@ $ txtmsk -p
 
 #### Mask & Unmask
 
-Text to mask
+Text to mask to unmask (stdin)
 ```
-$ txtmsk 'I am a false phimosis'
-lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA
-```
+$ echo 'I am a false phimosis' | txtmsk
+K6GlWbcSmPpF8Hi7nKudRPo6rCFcA4M/4ze93ujU5bzgvUfYg9At40Y2xg7ReEXaOw
 
-Text to unmask
-```
-$ txtmsk -u 'lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA'
+$ echo 'K6GlWbcSmPpF8Hi7nKudRPo6rCFcA4M/4ze93ujU5bzgvUfYg9At40Y2xg7ReEXaOw' | txtmsk -u
 I am a false phimosis
 ```
 
-Text to mask (stdin)
+Text to mask to unmask (file read)
 ```
-$ echo 'I am a false phimosis' | txtmsk
-lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA
-```
+$ cat my_secret.txt
+I am a false phimosis
 
-Text to unmask (stdin)
-```
-$ echo 'lKce3vRDwOBa/H7BoEXcXcyw7ZC7LsVkXtmySIZd/sUxABa+caIvUsBB0YlMRJ0rcA' | txtmsk -u
+$ txtmsk my_secret.txt > my_secret.txtmsk.txt
+
+$ cat my_secret.txtmsk.txt
+K6GlWbcSmPpF8Hi7nKudRPo6rCFcA4M/4ze93ujU5bzgvUfYg9At40Y2xg7ReEXaOw
+
+$ txtmsk -u my_secret.txtmsk.txt
 I am a false phimosis
 ```
 
@@ -67,7 +66,7 @@ I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 
-$ cat secret.txt | txtmsk
+$ txtmsk -u secret.txt
 I am a <msk>n6kL28dZQURtJ3as/Hpsryp+OwBR2rAN3Dbgb3iT84Mz7/f3gIu7qhqF</msk>
 I am a <msk>ruM8Rs1otjSrp5UhIOd5Z7Et6eC3zdBDlX3UaLvrPBAS0Hm6mOnZ1zjr</msk>
 I am a <msk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</msk>
@@ -84,14 +83,14 @@ I am a <msk>9NbYFdyGKycism9hx5Pq1hwGLNxz9+89Y02IL5ux9Nwt0QaUQGZKMeVS</msk>
 I am a <msk>ik02zV8PA2QxXV379KV0KRCVastEoJNVqkqEHyTKrb45Y05Rd142cQJn</msk>
 I am a <msk>OK44PxypCUO7KvYH+U8iyaYRzvaoqcTh8yHMkvcenUNP+6seRvVgWLP8</msk>
 
-$ cat secret.txtmsk.txt | txtmsk -u
+$ txtmsk -u secret.txtmsk.txt
 I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 I am a <msk>false phimosis</msk>
 
-$ cat secret.txtmsk.txt | txtmsk -u -t
+$ txtmsk -u -t secret.txtmsk.txt
 I am a false phimosis
 I am a false phimosis
 I am a false phimosis
@@ -102,7 +101,7 @@ I am a false phimosis
 ### Help
 
 ```
-Usage: txtmsk [options] text
+Usage: txtmsk [options] textfile
   -h    this help
   -p    set password
   -t    trim inline tags (unmask mode only)

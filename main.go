@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -52,22 +53,29 @@ func run() error {
 	}
 
 	var text string
+	var reader io.Reader = os.Stdin
 
 	if len(cmd.Args) > 0 {
-		text = cmd.Args[0]
+		fp, err := os.Open(cmd.Args[0])
+
+		if err != nil {
+			return err
+		}
+
+		reader = fp
 	} else {
 		if terminal.IsTerminal(0) {
 			return nil
 		}
-
-		sc := bufio.NewScanner(os.Stdin)
-
-		for sc.Scan() {
-			text += sc.Text() + "\n"
-		}
-
-		text = strings.TrimRight(text, "\n")
 	}
+
+	sc := bufio.NewScanner(reader)
+
+	for sc.Scan() {
+		text += sc.Text() + "\n"
+	}
+
+	text = strings.TrimRight(text, "\n")
 
 	m, err := mask.New(pw)
 

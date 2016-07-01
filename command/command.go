@@ -37,6 +37,6 @@ func New() *Command {
 }
 
 func (cmd *Command) ShowHelp() {
-	fmt.Fprintf(os.Stderr, "Usage: %s [options] text\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "Usage: %s [options] textfile\n", os.Args[0])
 	flag.PrintDefaults()
 }

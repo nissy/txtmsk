@@ -59,7 +59,7 @@ func newRealkey(key string) ([]byte, error) {
 
 func (m *Mask) Mask(text string) (string, error) {
 	if !utf8.ValidString(text) {
-		return "", errors.New("Not a text")
+		return "", errors.New("This is not a text of utf8")
 	}
 
 	src := compress([]byte(text))
