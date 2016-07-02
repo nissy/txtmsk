@@ -37,7 +37,7 @@ func run() error {
 	}
 
 	if cmd.Help {
-		cmd.ShowHelp()
+		cmd.PrintHelp()
 		return nil
 	}
 
@@ -61,6 +61,8 @@ func run() error {
 		if err != nil {
 			return err
 		}
+
+		defer fp.Close()
 
 		reader = fp
 	} else {
