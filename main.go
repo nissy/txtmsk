@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -71,13 +72,15 @@ func run() error {
 		}
 	}
 
+	var tBuf bytes.Buffer
 	sc := bufio.NewScanner(reader)
 
 	for sc.Scan() {
-		text += sc.Text() + "\n"
+		tBuf.WriteString(sc.Text())
+		tBuf.WriteString("\n")
 	}
 
-	text = strings.TrimRight(text, "\n")
+	text = strings.TrimRight(tBuf.String(), "\n")
 
 	m, err := mask.New(pw)
 
@@ -86,7 +89,7 @@ func run() error {
 	}
 
 	if cmd.UnMask {
-		umText, err := runUnMask(m, text)
+		umText, err := tryUnMask(m, text)
 
 		if err != nil {
 			return err
@@ -100,7 +103,7 @@ func run() error {
 		return nil
 	}
 
-	mText, err := runMask(m, text)
+	mText, err := tryMask(m, text)
 
 	if err != nil {
 		return err
