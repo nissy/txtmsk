@@ -53,19 +53,18 @@ func run() error {
 		}
 	}
 
-	var text string
-	var reader io.Reader = os.Stdin
+	var fp io.Reader = os.Stdin
 
 	if len(cmd.Args) > 0 {
-		fp, err := os.Open(cmd.Args[0])
+		f, err := os.Open(cmd.Args[0])
 
 		if err != nil {
 			return err
 		}
 
-		defer fp.Close()
+		defer f.Close()
 
-		reader = fp
+		fp = f
 	} else {
 		if terminal.IsTerminal(0) {
 			return nil
@@ -73,14 +72,19 @@ func run() error {
 	}
 
 	var tBuf bytes.Buffer
-	sc := bufio.NewScanner(reader)
+
+	sc := bufio.NewScanner(fp)
 
 	for sc.Scan() {
-		tBuf.WriteString(sc.Text())
+		tBuf.Write(sc.Bytes())
 		tBuf.WriteString("\n")
 	}
 
-	text = strings.TrimRight(tBuf.String(), "\n")
+	if sc.Err() != nil {
+		return err
+	}
+
+	text := strings.TrimRight(tBuf.String(), "\n")
 
 	m, err := mask.New(pw)
 
