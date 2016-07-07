@@ -19,6 +19,7 @@ var (
 	ErrNotDecrypt = errors.New("Not decrypt the text")
 	ErrNotMasked  = errors.New("Not masked the text")
 	ErrNotUseText = errors.New("This is not a text of utf8")
+	ErrEmptyText  = errors.New("Text is empty")
 )
 
 type Mask struct {
@@ -60,8 +61,8 @@ func newRealkey(key string) ([]byte, error) {
 }
 
 func (m *Mask) Mask(text string) (string, error) {
-	if !canUsedText(text) {
-		return "", ErrNotUseText
+	if err := verifyText(text); err != nil {
+		return "", err
 	}
 
 	src := compress([]byte(text))
@@ -75,12 +76,12 @@ func (m *Mask) Mask(text string) (string, error) {
 }
 
 func (m *Mask) UnMask(text string) (string, error) {
-	if !canUsedText(text) {
-		return "", ErrNotUseText
+	if err := verifyText(text); err != nil {
+		return "", err
 	}
 
-	if !isMaskText(text) {
-		return "", ErrNotMasked
+	if err := verifyMaskText(text); err != nil {
+		return "", err
 	}
 
 	src, err := base64.RawStdEncoding.DecodeString(text)
@@ -115,11 +116,11 @@ func (m *Mask) UnMask(text string) (string, error) {
 
 	dText := string(src)
 
-	if canUsedText(dText) {
-		return dText, nil
+	if err := verifyText(dText); err != nil {
+		return "", err
 	}
 
-	return "", ErrNotDecrypt
+	return dText, nil
 }
 
 func (m *Mask) encrypt(src []byte) ([]byte, error) {
@@ -188,14 +189,26 @@ func unCompress(src []byte) ([]byte, error) {
 	return dstBuf.Bytes(), nil
 }
 
-func isMaskText(text string) bool {
+func verifyMaskText(text string) error {
 	if len(text) < 40 {
-		return false
+		return ErrNotMasked
 	}
 
-	return regexp.MustCompile(`^[A-Za-z0-9/+]*=*$`).MatchString(text)
+	if !regexp.MustCompile(`^[A-Za-z0-9/+]*=*$`).MatchString(text) {
+		return ErrNotMasked
+	}
+
+	return nil
 }
 
-func canUsedText(text string) bool {
-	return utf8.ValidString(text)
+func verifyText(text string) error {
+	if !utf8.ValidString(text) {
+		return ErrNotUseText
+	}
+
+	if len(text) == 0 {
+		return ErrEmptyText
+	}
+
+	return nil
 }
