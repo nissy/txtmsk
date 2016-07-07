@@ -115,7 +115,7 @@ func (m *Mask) UnMask(text string) (string, error) {
 
 	dText := string(src)
 
-	if utf8.ValidString(dText) {
+	if canUsedText(dText) {
 		return dText, nil
 	}
 

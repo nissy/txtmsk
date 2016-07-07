@@ -5,10 +5,6 @@ encryption is aes256
 
 compress is zlib
 
-## Demo
-
-![txtmsk](https://raw.githubusercontent.com/wiki/ngc224/txtmsk/txtmsk.gif)
-
 ## Install
 ```
 $ go get github.com/ngc224/txtmsk
