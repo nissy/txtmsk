@@ -18,6 +18,7 @@ import (
 var (
 	ErrNotDecrypt = errors.New("Not decrypt the text")
 	ErrNotMasked  = errors.New("Not masked the text")
+	ErrNotUseText = errors.New("This is not a text of utf8")
 )
 
 type Mask struct {
@@ -59,8 +60,8 @@ func newRealkey(key string) ([]byte, error) {
 }
 
 func (m *Mask) Mask(text string) (string, error) {
-	if !utf8.ValidString(text) {
-		return "", errors.New("This is not a text of utf8")
+	if !canUsedText(text) {
+		return "", ErrNotUseText
 	}
 
 	src := compress([]byte(text))
@@ -74,6 +75,10 @@ func (m *Mask) Mask(text string) (string, error) {
 }
 
 func (m *Mask) UnMask(text string) (string, error) {
+	if !canUsedText(text) {
+		return "", ErrNotUseText
+	}
+
 	if !isMaskText(text) {
 		return "", ErrNotMasked
 	}
@@ -189,4 +194,8 @@ func isMaskText(text string) bool {
 	}
 
 	return regexp.MustCompile(`^[A-Za-z0-9/+]*=*$`).MatchString(text)
+}
+
+func canUsedText(text string) bool {
+	return utf8.ValidString(text)
 }

@@ -92,7 +92,10 @@ func run() error {
 		umText, err := tryUnMask(m, text)
 
 		if err != nil {
-			fmt.Println(text)
+			if err != mask.ErrNotUseText {
+				fmt.Println(text)
+			}
+
 			return err
 		}
 
