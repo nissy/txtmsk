@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	markName        = "msk"
-	inlineMarkStart = "<" + markName + ">"
-	inlineMarkEnd   = "</" + markName + ">"
+	inlineMarkName  = "msk"
+	inlineMarkStart = "<" + inlineMarkName + ">"
+	inlineMarkEnd   = "</" + inlineMarkName + ">"
 )
 
 func tryMask(m *mask.Mask, text string) (string, error) {
@@ -44,10 +44,12 @@ func tryUnMask(m *mask.Mask, text string) (string, error) {
 		return umText, nil
 	}
 
-	umText, err = m.UnMask(text)
+	if !newInLineRegexp().MatchString(umText) {
+		umText, err = m.UnMask(text)
 
-	if err != nil {
-		return "", err
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return umText, nil
@@ -72,7 +74,7 @@ func inLineUnMask(m *mask.Mask, text string) (string, error) {
 		umLine, err := m.UnMask(v[1])
 
 		if err != nil {
-			return "", err
+			continue
 		}
 
 		text = replaceInLine(text, v[0], umLine)

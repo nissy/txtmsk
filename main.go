@@ -92,6 +92,7 @@ func run() error {
 		umText, err := tryUnMask(m, text)
 
 		if err != nil {
+			fmt.Println(text)
 			return err
 		}
 
@@ -100,6 +101,11 @@ func run() error {
 		}
 
 		fmt.Println(umText)
+
+		if umText == text {
+			return mask.ErrNotDecrypt
+		}
+
 		return nil
 	}
 
