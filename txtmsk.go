@@ -13,7 +13,7 @@ var (
 	inlineMarkEnd   = "</" + inlineMarkName + ">"
 )
 
-func tryMask(m *mask.Mask, text string) (string, error) {
+func TryMask(m *mask.Mask, text string) (string, error) {
 	mText, err := inLineMask(m, text)
 
 	if err != nil {
@@ -33,7 +33,7 @@ func tryMask(m *mask.Mask, text string) (string, error) {
 	return mText, nil
 }
 
-func tryUnMask(m *mask.Mask, text string) (string, error) {
+func TryUnMask(m *mask.Mask, text string) (string, error) {
 	umText, err := inLineUnMask(m, text)
 
 	if err != nil {
@@ -95,7 +95,7 @@ func newInlineMark(element string) string {
 	return inlineMarkStart + element + inlineMarkEnd
 }
 
-func trimInLineTag(src string) string {
+func TrimInLineTag(src string) string {
 	return strings.Replace(
 		strings.Replace(src, inlineMarkStart, "", -1),
 		inlineMarkEnd, "", -1)

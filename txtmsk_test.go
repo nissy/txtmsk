@@ -19,13 +19,13 @@ func TestMaskToUnMask(t *testing.T) {
 		t.Error(err)
 	}
 
-	mText, err := tryMask(m, text)
+	mText, err := TryMask(m, text)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	umText, err := tryUnMask(m, mText)
+	umText, err := TryUnMask(m, mText)
 
 	if umText != text {
 		t.Error(err)
@@ -39,15 +39,15 @@ func TestInlineMaskToUnMask(t *testing.T) {
 		t.Error(err)
 	}
 
-	mInlineText, err := tryMask(m, inlineText)
+	mInlineText, err := TryMask(m, inlineText)
 
 	if err != nil {
 		t.Error(err)
 	}
 
-	umInlineText, err := tryUnMask(m, mInlineText)
+	umInlineText, err := TryUnMask(m, mInlineText)
 
-	if umInlineText != inlineText {
+	if umInlineText != inlineText || err != nil {
 		t.Error(err)
 	}
 }

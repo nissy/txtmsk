@@ -190,7 +190,7 @@ func unCompress(src []byte) ([]byte, error) {
 }
 
 func verifyMaskText(text string) error {
-	if len(text) < 40 {
+	if len(text) < 39 {
 		return ErrNotMasked
 	}
 
