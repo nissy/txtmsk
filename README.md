@@ -19,7 +19,7 @@ $ brew install ngc224/txtmsk/txtmsk
 #### Set password
 
 - Mac OS X: Keychain
-- Linux: Filebase
+- Other: Filebase
 
 ```
 $ txtmsk -p
