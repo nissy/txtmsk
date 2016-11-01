@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	"github.com/ngc224/txtmsk"
 	"github.com/ngc224/txtmsk/keystore"
@@ -17,7 +16,7 @@ import (
 
 const (
 	applicationName = "txtmsk"
-	version         = "1.2.1"
+	version         = "1.2.2"
 )
 
 var (
@@ -87,21 +86,23 @@ func run() error {
 
 	var tBuf bytes.Buffer
 
-	sc := bufio.NewScanner(fp)
+	reader := bufio.NewReaderSize(fp, 4096)
 
-	bufLen := bufio.MaxScanTokenSize
-	sc.Buffer(make([]byte, bufLen, 1000*bufLen), 1000*bufLen)
+	for {
+		line, err := reader.ReadBytes('\n')
 
-	for sc.Scan() {
-		tBuf.Write(sc.Bytes())
-		tBuf.WriteString("\n")
+		if err != nil && err != io.EOF {
+			return err
+		}
+
+		tBuf.Write(line)
+
+		if err == io.EOF {
+			break
+		}
 	}
 
-	if sc.Err() != nil {
-		return sc.Err()
-	}
-
-	text := strings.TrimRight(tBuf.String(), "\n")
+	text := tBuf.String()
 
 	m, err := mask.New(pw)
 
@@ -124,7 +125,7 @@ func run() error {
 			umText = txtmsk.TrimInLineTag(umText)
 		}
 
-		fmt.Println(umText)
+		fmt.Print(umText)
 
 		if umText == text {
 			return mask.ErrNotDecrypt
@@ -139,6 +140,6 @@ func run() error {
 		return err
 	}
 
-	fmt.Println(mText)
+	fmt.Print(mText)
 	return nil
 }

@@ -12,6 +12,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -76,6 +77,8 @@ func (m *Mask) Mask(text string) (string, error) {
 }
 
 func (m *Mask) UnMask(text string) (string, error) {
+	text = cleanUnMaskText(text)
+
 	if err := verifyText(text); err != nil {
 		return "", err
 	}
@@ -211,4 +214,12 @@ func verifyText(text string) error {
 	}
 
 	return nil
+}
+
+func cleanUnMaskText(text string) string {
+	for _, v := range []string{"%", "\n"} {
+		text = strings.Replace(text, v, "", -1)
+	}
+
+	return text
 }
