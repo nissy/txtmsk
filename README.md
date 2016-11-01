@@ -7,7 +7,7 @@ compress is zlib
 
 ## Install
 ```
-$ go get github.com/ngc224/txtmsk/cmd/txtmsk
+$ go get -u github.com/ngc224/txtmsk/cmd/txtmsk
 ```
 
 Mac OS X
