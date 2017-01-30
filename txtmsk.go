@@ -8,9 +8,8 @@ import (
 )
 
 var (
-	inlineMarkName  = "msk"
-	inlineMarkStart = "<" + inlineMarkName + ">"
-	inlineMarkEnd   = "</" + inlineMarkName + ">"
+	inlineMarkStart = "<msk>"
+	inlineMarkEnd   = "</msk>"
 )
 
 func TryMask(m *mask.Mask, text string) (string, error) {
@@ -57,13 +56,13 @@ func TryUnMask(m *mask.Mask, text string) (string, error) {
 
 func inLineMask(m *mask.Mask, text string) (string, error) {
 	for _, v := range newInLineRegexp().FindAllStringSubmatch(text, -1) {
-		mLine, err := m.Mask(v[1])
+		line, err := m.Mask(v[1])
 
 		if err != nil {
 			return "", err
 		}
 
-		text = replaceInLine(text, v[0], mLine)
+		text = replaceInLine(text, v[0], line)
 	}
 
 	return text, nil
@@ -71,13 +70,13 @@ func inLineMask(m *mask.Mask, text string) (string, error) {
 
 func inLineUnMask(m *mask.Mask, text string) (string, error) {
 	for _, v := range newInLineRegexp().FindAllStringSubmatch(text, -1) {
-		umLine, err := m.UnMask(v[1])
+		line, err := m.UnMask(v[1])
 
 		if err != nil {
 			continue
 		}
 
-		text = replaceInLine(text, v[0], umLine)
+		text = replaceInLine(text, v[0], line)
 	}
 
 	return text, nil
@@ -87,12 +86,12 @@ func newInLineRegexp() *regexp.Regexp {
 	return regexp.MustCompile(newInlineMark(`([\s\S]+?)`))
 }
 
-func replaceInLine(src, old, new string) string {
-	return strings.Replace(src, old, newInlineMark(new), 1)
-}
-
 func newInlineMark(element string) string {
 	return inlineMarkStart + element + inlineMarkEnd
+}
+
+func replaceInLine(src, old, new string) string {
+	return strings.Replace(src, old, newInlineMark(new), 1)
 }
 
 func TrimInLineTag(src string) string {

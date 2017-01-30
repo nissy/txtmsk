@@ -62,12 +62,11 @@ func newRealkey(key string) ([]byte, error) {
 }
 
 func (m *Mask) Mask(text string) (string, error) {
-	if err := verifyText(text); err != nil {
+	if err := validText(text); err != nil {
 		return "", err
 	}
 
-	src := compress([]byte(text))
-	src, err := m.encrypt(src)
+	src, err := m.encrypt(compress([]byte(text)))
 
 	if err != nil {
 		return "", err
@@ -79,11 +78,11 @@ func (m *Mask) Mask(text string) (string, error) {
 func (m *Mask) UnMask(text string) (string, error) {
 	text = cleanUnMaskText(text)
 
-	if err := verifyText(text); err != nil {
+	if err := validText(text); err != nil {
 		return "", err
 	}
 
-	if err := verifyMaskText(text); err != nil {
+	if err := validMaskText(text); err != nil {
 		return "", err
 	}
 
@@ -117,13 +116,13 @@ func (m *Mask) UnMask(text string) (string, error) {
 		return "", err
 	}
 
-	dText := string(src)
+	umText := string(src)
 
-	if err := verifyText(dText); err != nil {
+	if err := validText(umText); err != nil {
 		return "", err
 	}
 
-	return dText, nil
+	return umText, nil
 }
 
 func (m *Mask) encrypt(src []byte) ([]byte, error) {
@@ -192,7 +191,7 @@ func unCompress(src []byte) ([]byte, error) {
 	return dstBuf.Bytes(), nil
 }
 
-func verifyMaskText(text string) error {
+func validMaskText(text string) error {
 	if len(text) < 39 {
 		return ErrNotMasked
 	}
@@ -204,7 +203,7 @@ func verifyMaskText(text string) error {
 	return nil
 }
 
-func verifyText(text string) error {
+func validText(text string) error {
 	if !utf8.ValidString(text) {
 		return ErrNotUseText
 	}

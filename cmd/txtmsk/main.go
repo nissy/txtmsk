@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -16,7 +15,7 @@ import (
 
 const (
 	applicationName = "txtmsk"
-	version         = "1.2.2"
+	version         = "1.3.0"
 )
 
 var (
@@ -66,7 +65,7 @@ func run() error {
 		}
 	}
 
-	var fp io.Reader = os.Stdin
+	file := os.Stdin
 
 	if len(args) > 0 {
 		f, err := os.Open(args[0])
@@ -75,34 +74,39 @@ func run() error {
 			return err
 		}
 
-		defer f.Close()
-
-		fp = f
+		file = f
 	} else {
 		if terminal.IsTerminal(0) {
 			return nil
 		}
 	}
 
-	var tBuf bytes.Buffer
+	defer file.Close()
 
-	reader := bufio.NewReaderSize(fp, 4096)
+	stat, err := file.Stat()
+
+	if err != nil {
+		return err
+	}
+
+	b := make([]byte, 0, stat.Size())
+	r := bufio.NewReader(file)
 
 	for {
-		line, err := reader.ReadBytes('\n')
+		line, err := r.ReadBytes('\n')
 
 		if err != nil && err != io.EOF {
 			return err
 		}
 
-		tBuf.Write(line)
+		b = append(b, line...)
 
 		if err == io.EOF {
 			break
 		}
 	}
 
-	text := tBuf.String()
+	text := string(b)
 
 	m, err := mask.New(pw)
 
@@ -141,5 +145,6 @@ func run() error {
 	}
 
 	fmt.Print(mText)
+
 	return nil
 }
