@@ -7,9 +7,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/ngc224/txtmsk"
-	"github.com/ngc224/txtmsk/keystore"
-	"github.com/ngc224/txtmsk/mask"
+	"github.com/nissy/txtmsk"
+	"github.com/nissy/txtmsk/keystore"
+	"github.com/nissy/txtmsk/mask"
 	"golang.org/x/crypto/ssh/terminal"
 )
 

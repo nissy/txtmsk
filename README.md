@@ -7,12 +7,12 @@ compress is zlib
 
 ## Install
 ```
-$ go get -u github.com/ngc224/txtmsk/cmd/txtmsk
+$ go get -u github.com/nissy/txtmsk/cmd/txtmsk
 ```
 
 Mac OS X
 ```
-$ brew install ngc224/txtmsk/txtmsk
+$ brew install nissy/txtmsk/txtmsk
 ```
 
 ## Usage

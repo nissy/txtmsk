@@ -3,7 +3,7 @@ package txtmsk
 import (
 	"testing"
 
-	"github.com/ngc224/txtmsk/mask"
+	"github.com/nissy/txtmsk/mask"
 )
 
 var (
