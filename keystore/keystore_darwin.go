@@ -18,12 +18,16 @@ func New(name string) *KeyStore {
 	}
 }
 
-func (key *KeyStore) Set() (string, error) {
+func (key *KeyStore) Set() (pw string, err error) {
 	stdin := os.Stdin
-	os.Stdin, _ = os.Open("/dev/tty")
+	os.Stdin, err = os.Open("/dev/tty")
+
+	if err != nil {
+		return pw, err
+	}
 
 	for {
-		pw, err := prompt.Password("Set the password in keychain: ")
+		pw, err = prompt.Password("Set the password in keychain: ")
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())
@@ -46,7 +50,7 @@ func (key *KeyStore) Set() (string, error) {
 		return pw, nil
 	}
 
-	return "", ErrNotSetPassword
+	return pw, ErrNotSetPassword
 }
 
 func (key *KeyStore) Get() (string, error) {
